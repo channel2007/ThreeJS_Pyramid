@@ -1,0 +1,91 @@
+﻿<!DOCTYPE html>
+
+<html lang="tw" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <title>PyramidTutorial1</title>
+    <style>
+        body {
+            font-family: Monospace;
+            background-color: #000000;
+            margin: 0px;
+            overflow: hidden;
+        }
+        canvas {
+            width: 100%;
+            height: 100%
+        }
+    </style>
+</head>
+<body>
+    
+    <script src="js/three.min.js"></script>
+    <script src="js/OrbitControls.js"></script>
+    <script>
+        // 建立場景.
+        var scene = new THREE.Scene();
+
+        // 建立攝影機.
+        var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.position.set(0, 0, 60);
+        camera.lookAt(new THREE.Vector3(0, 0, 0));
+
+        // 建立成像物件.
+        var renderer = new THREE.WebGLRenderer({ alpha: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+
+        // 建立Box物件.
+        var geometry = new THREE.BoxGeometry(50, 50, 50);
+        geometry.vertices[0].x = 0; geometry.vertices[0].y = 0; geometry.vertices[0].z = 0;
+        geometry.vertices[1].x = 0; geometry.vertices[1].y = 0; geometry.vertices[1].z = 0;
+        geometry.vertices[4].x = 0; geometry.vertices[4].y = 0; geometry.vertices[4].z = 0;
+        geometry.vertices[5].x = 0; geometry.vertices[5].y = 0; geometry.vertices[5].z = 0;
+
+        // 設定Normal貼圖.
+        var cubeMaterial = new THREE.MeshNormalMaterial();
+        var cube = new THREE.Mesh(geometry, cubeMaterial);
+        scene.add(cube);
+
+        // 設定地板物件.
+        plane = new THREE.Mesh(new THREE.PlaneBufferGeometry(400, 400), new THREE.MeshBasicMaterial({ color: 0xe0e0e0 }));
+        plane.position.y = - 50;
+        plane.rotation.x = - Math.PI / 2;
+        scene.add(plane);
+
+        // 使用滑鼠控制鏡頭移動.
+        var controls = new THREE.OrbitControls(camera);
+        controls.maxPolarAngle = 0.9 * Math.PI / 2;
+        controls.enableZoom = false;
+
+        // 設定視窗改變時改變camera.
+        window.addEventListener('resize', onWindowResize, false);
+
+        // 設定成像迴圈.
+        render();
+
+        //--------------------------------------------------------------------
+        // 成像迴圈. 
+        //--------------------------------------------------------------------
+        function render() {
+            // 設定執行成像.
+            requestAnimationFrame(render);
+            // 旋轉cube.
+            cube.rotation.x += 0.02;
+            cube.rotation.y += 0.02;
+            // 成像場景.
+            renderer.render(scene, camera);
+        }
+
+        //--------------------------------------------------------------------
+        // 視窗大小改變時執行.
+        //--------------------------------------------------------------------
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+    </script>
+</body>
+</html>
